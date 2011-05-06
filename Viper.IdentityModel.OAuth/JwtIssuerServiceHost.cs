@@ -3,14 +3,14 @@ using System.ServiceModel.Web;
 
 namespace Viper.IdentityModel.OAuth
 {
-    public class JwtServiceHost : WebServiceHost
+    public class JwtIssuerServiceHost : WebServiceHost
     {
-        public JwtServiceHost(JwtServiceConfiguration configuration)
-            : this(typeof(JwtServiceHost), null, configuration)
+        public JwtIssuerServiceHost(JwtServiceConfiguration configuration)
+            : this(typeof(JwtIssuerServiceHost), null, configuration)
         {
         }
 
-        public JwtServiceHost(
+        public JwtIssuerServiceHost(
             Type serviceType, 
             Uri[] baseAddresses, 
             JwtServiceConfiguration configuration) : base(serviceType, baseAddresses)

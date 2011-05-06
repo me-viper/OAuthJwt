@@ -5,7 +5,7 @@ using System.ServiceModel.Web;
 namespace Viper.IdentityModel.OAuth
 {
     [ServiceContract]
-    public interface IOAuthIssuerContract
+    public interface IJwtIssuerContract
     {
         [WebInvoke(UriTemplate = "")]
         Stream Issue(Stream request);

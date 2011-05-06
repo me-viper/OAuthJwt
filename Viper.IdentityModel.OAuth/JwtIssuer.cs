@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Protocols.WSTrust;
 
 namespace Viper.IdentityModel.OAuth
 {
-    public class OAuthIssuer : IOAuthIssuerContract
+    public class JwtIssuer : IJwtIssuerContract
     {
         public Stream Issue(Stream request)
         {
@@ -34,7 +34,7 @@ namespace Viper.IdentityModel.OAuth
             var parameters = HttpUtility.ParseQueryString(postData);
             var token = GetTokenHandler(parameters);
 
-            var wifConfiguration = ((JwtServiceHost)OperationContext.Current.Host).Configuration;
+            var wifConfiguration = ((JwtIssuerServiceHost)OperationContext.Current.Host).Configuration;
             
             ClaimsIdentityCollection identities = null;
 
@@ -61,8 +61,7 @@ namespace Viper.IdentityModel.OAuth
                 var securityTokenService = wifConfiguration.CreateSecurityTokenService();
                 var rstr = securityTokenService.Issue(new ClaimsPrincipal(identities), rst);
                 var jwtToken = (JsonWebToken)rstr.RequestedSecurityToken.SecurityToken;
-                response = JwtSecurityTokenHandler.GetRawToken(jwtToken);
-
+                response = "wrap_access_token" + JwtSecurityTokenHandler.GetRawToken(jwtToken);
             }
             catch (Exception)
             {
