@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Configuration;
 
 namespace Viper.IdentityModel.OAuth
 {
-    public class JwtServiceConfiguration : SecurityTokenServiceConfiguration
+    public class JwtIssuerConfiguration : SecurityTokenServiceConfiguration
     {        
     }
 }

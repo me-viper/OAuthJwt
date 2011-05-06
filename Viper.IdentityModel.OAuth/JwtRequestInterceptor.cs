@@ -6,19 +6,20 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
 using System.ServiceModel.Web;
+
 using Microsoft.IdentityModel.Claims;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.ServiceModel.Web;
 
 namespace Viper.IdentityModel.OAuth
 {
-    public class OAuthRequestInterceptor : RequestInterceptor
+    public class JwtRequestInterceptor : RequestInterceptor
     {
         private const string AccessTokenPrefix = "WRAP access_token";
 
         private FederatedServiceCredentials _wifCredentials;
 
-        public OAuthRequestInterceptor(BindingContext bindingContext) : base(true)
+        public JwtRequestInterceptor(BindingContext bindingContext) : base(true)
         {
             if (bindingContext == null)
                 throw new ArgumentNullException("bindingContext");

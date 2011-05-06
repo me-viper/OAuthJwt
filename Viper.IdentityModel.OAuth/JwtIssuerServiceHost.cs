@@ -1,11 +1,12 @@
 using System;
-using System.ServiceModel.Web;
+
+using Microsoft.ServiceModel.Web;
 
 namespace Viper.IdentityModel.OAuth
 {
-    public class JwtIssuerServiceHost : WebServiceHost
+    public class JwtIssuerServiceHost : WebServiceHost2
     {
-        public JwtIssuerServiceHost(JwtServiceConfiguration configuration)
+        public JwtIssuerServiceHost(JwtIssuerConfiguration configuration)
             : this(typeof(JwtIssuerServiceHost), null, configuration)
         {
         }
@@ -13,7 +14,7 @@ namespace Viper.IdentityModel.OAuth
         public JwtIssuerServiceHost(
             Type serviceType, 
             Uri[] baseAddresses, 
-            JwtServiceConfiguration configuration) : base(serviceType, baseAddresses)
+            JwtIssuerConfiguration configuration) : base(serviceType, baseAddresses)
         {
             if (configuration == null)
                 throw new ArgumentNullException("configuration");
@@ -21,6 +22,6 @@ namespace Viper.IdentityModel.OAuth
             Configuration = configuration;
         }
 
-        public JwtServiceConfiguration Configuration { get; private set; }
+        public JwtIssuerConfiguration Configuration { get; private set; }
     }
 }

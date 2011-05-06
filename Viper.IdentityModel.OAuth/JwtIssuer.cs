@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Protocols.WSTrust;
 
 namespace Viper.IdentityModel.OAuth
 {
-    public class JwtIssuer : IJwtIssuerContract
+    internal class JwtIssuer : IJwtIssuerContract
     {
         public Stream Issue(Stream request)
         {
