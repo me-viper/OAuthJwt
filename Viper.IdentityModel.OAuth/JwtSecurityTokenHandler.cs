@@ -75,7 +75,7 @@ namespace Viper.IdentityModel.OAuth
         {
             var jwt = (JsonWebToken)token;
 
-            // ! Resolve signing key heere !
+            // ! Resolve signing key here !
             var key = new InMemorySymmetricSecurityKey(null);
             var mac = new HMACSHA256(key.GetSymmetricKey());
             
@@ -106,21 +106,9 @@ namespace Viper.IdentityModel.OAuth
             if (token == null)
                 throw new ArgumentNullException("token");
 
-            var key = (InMemorySymmetricSecurityKey)token.SecurityKeys[0];
-            var mac = new HMACSHA256(key.GetSymmetricKey());
-            
-            var jwt = (JsonWebToken)token;
+            string rawToken = GetRawToken(token);
 
-            var jwsHeaderInput = jwt.GetJwsHeaderInput();
-            var jwsPayloadInput = jwt.GetJwsPayloadInput();
-
-            var jwsSigningInput = string.Format("{0}.{1}", jwsHeaderInput, jwsPayloadInput);
-            var hash = mac.ComputeHash(Encoding.UTF8.GetBytes(jwsSigningInput));
-
-            var jwsCryptoOutput = JwtTokenUtility.Base64UrlEncode(hash);
-            var wrappedElement = JwtTokenUtility.WrapInsideBinarySecurityToken(
-                string.Format("{0}.{1}.{2}", jwsHeaderInput, jwsPayloadInput, jwsCryptoOutput)
-                );
+            var wrappedElement = JwtTokenUtility.WrapInsideBinarySecurityToken(rawToken);
 
             wrappedElement.WriteTo(writer);
         }
@@ -140,6 +128,23 @@ namespace Viper.IdentityModel.OAuth
             var key = (InMemorySymmetricSecurityKey)tokenDescriptor.SigningCredentials.SigningKey;
             
             return new JsonWebToken(header, claims, key);
+        }
+
+        internal static string GetRawToken(SecurityToken token)
+        {
+            var key = (InMemorySymmetricSecurityKey)token.SecurityKeys[0];
+            var mac = new HMACSHA256(key.GetSymmetricKey());
+            
+            var jwt = (JsonWebToken)token;
+
+            var jwsHeaderInput = jwt.GetJwsHeaderInput();
+            var jwsPayloadInput = jwt.GetJwsPayloadInput();
+
+            var jwsSigningInput = string.Format("{0}.{1}", jwsHeaderInput, jwsPayloadInput);
+            var hash = mac.ComputeHash(Encoding.UTF8.GetBytes(jwsSigningInput));
+
+            var jwsCryptoOutput = JwtTokenUtility.Base64UrlEncode(hash);
+            return string.Format("{0}.{1}.{2}", jwsHeaderInput, jwsPayloadInput, jwsCryptoOutput);
         }
     }
 }
