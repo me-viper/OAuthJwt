@@ -62,17 +62,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IOAuthIssuerContract.cs" />
+    <Compile Include="IJwtIssuerContract.cs" />
     <Compile Include="JsonClaimsConverterCollection.cs" />
     <Compile Include="JsonWebToken.cs" />
     <Compile Include="JwtClaimsSegment.cs" />
     <Compile Include="JwtHeaderSegment.cs" />
     <Compile Include="JwtSecurityTokenHandler.cs" />
+    <Compile Include="JwtIssuerConfiguration.cs" />
+    <Compile Include="JwtIssuerServiceHost.cs" />
     <Compile Include="JwtTokenUtility.cs" />
-    <Compile Include="OAuthIssuer.cs" />
-    <Compile Include="OAuthRequestInterceptor.cs" />
+    <Compile Include="JwtIssuer.cs" />
+    <Compile Include="JwtRequestInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WSTrustWebServiceHost.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

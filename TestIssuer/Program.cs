@@ -24,7 +24,7 @@ namespace TestIssuer
 
         public override ClaimsIdentityCollection ValidateToken(SecurityToken token)
         {
-            
+               
         }
     }
 
