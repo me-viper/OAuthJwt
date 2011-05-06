@@ -7,6 +7,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Viper.IdentityModel.OAuth
 {
+    /// <summary>
+    /// Serializes and deserializes instance of type <see cref="Collection{Claim}"/> into JSON format.
+    /// </summary>
     public class JsonClaimsConverterCollection : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -22,6 +25,7 @@ namespace Viper.IdentityModel.OAuth
             {
                 if (reader.TokenType != JsonToken.StartObject)
                     break;
+
 
                 var jo = JObject.Load(reader);
                 var claim = new Claim(

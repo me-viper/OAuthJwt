@@ -75,7 +75,7 @@ namespace Viper.IdentityModel.OAuth
                     security.ServiceSecurityContext = new ServiceSecurityContext(authorizationContext);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new WebFaultException(HttpStatusCode.BadRequest);
             }

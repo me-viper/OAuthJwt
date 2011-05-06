@@ -7,10 +7,12 @@ namespace Viper.IdentityModel.OAuth
     {
         public static string Base64UrlEncode(byte[] arg)
         {
-            string s = Convert.ToBase64String(arg); // Standard base64 encoder
-            s = s.Split('=')[0]; // Remove any trailing '='s
-            s = s.Replace('+', '-'); // 62nd char of encoding
-            s = s.Replace('/', '_'); // 63rd char of encoding
+            // Standard base64 encoder.
+            var s = Convert.ToBase64String(arg);
+
+            s = s.Split('=')[0]; // Remove any trailing '='s.
+            s = s.Replace('+', '-'); // 62nd char of encoding.
+            s = s.Replace('/', '_'); // 63rd char of encoding.
 
             return s;
         }
@@ -18,6 +20,7 @@ namespace Viper.IdentityModel.OAuth
         public static byte[] Base64UrlDecode(string arg)
         {
             string s = arg;
+
             s = s.Replace('-', '+'); // 62nd char of encoding
             s = s.Replace('_', '/'); // 63rd char of encoding
 

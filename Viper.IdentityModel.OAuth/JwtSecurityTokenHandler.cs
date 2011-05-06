@@ -44,13 +44,13 @@ namespace Viper.IdentityModel.OAuth
             SecurityToken result = null;
 
             if (!CanReadToken(reader))
-                throw new InvalidOperationException("Invalid token");
+                throw new InvalidOperationException("Invalid token.");
 
             var buffer = reader.ReadContentAsString();
             var tokenParts = buffer.Split(new[] {"."}, StringSplitOptions.RemoveEmptyEntries);
 
             if (tokenParts.Length > 3 || tokenParts.Length < 2)
-                throw new InvalidOperationException("Invalid token format");
+                throw new InvalidOperationException("Invalid token format.");
 
             var rawJwtHeader = Encoding.UTF8.GetString(JwtTokenUtility.Base64UrlDecode(tokenParts[0]));
             var rawJwtClaims = Encoding.UTF8.GetString(JwtTokenUtility.Base64UrlDecode(tokenParts[1]));
@@ -128,10 +128,8 @@ namespace Viper.IdentityModel.OAuth
         public override SecurityToken CreateToken(SecurityTokenDescriptor tokenDescriptor)
         {
             var seconds = (tokenDescriptor.Lifetime.Expires - tokenDescriptor.Lifetime.Created) ?? new TimeSpan(0, 0, 3600);
-
-            JwtHeaderSegment header = new JwtHeaderSegment();
-
-            JwtClaimsSegment claims = new JwtClaimsSegment(
+            var header = new JwtHeaderSegment();
+            var claims = new JwtClaimsSegment(
                 tokenDescriptor.TokenIssuerName,
                 tokenDescriptor.AppliesToAddress,
                 DateTime.UtcNow,
