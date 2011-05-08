@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens;
+using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -67,13 +68,23 @@ namespace Viper.IdentityModel.OAuth
             get { return _keys.AsReadOnly(); }
         }
 
-        internal string GetJwsHeaderInput()
+        internal string GetSigningInput()
+        {
+            return string.Format("{0}.{1}", GetJwsHeaderInput(), GetJwsPayloadInput());
+        }
+
+        internal string GetRawToken(string cryptoOutput)
+        {
+            return string.Format("{0}.{1}", GetSigningInput(), cryptoOutput);
+        }
+
+        private string GetJwsHeaderInput()
         {
             var decodedJwsHeaderInput = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(HeaderSection));
             return JwtTokenUtility.Base64UrlEncode(decodedJwsHeaderInput);
         }
 
-        internal string GetJwsPayloadInput()
+        private string GetJwsPayloadInput()
         {
             var decodedJwsPayloadInput = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(ClaimsSection));
             return JwtTokenUtility.Base64UrlEncode(decodedJwsPayloadInput);
