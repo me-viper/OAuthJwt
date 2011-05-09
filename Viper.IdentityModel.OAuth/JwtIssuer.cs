@@ -33,7 +33,6 @@ namespace Viper.IdentityModel.OAuth
 
             var parameters = HttpUtility.ParseQueryString(postData);
             var token = GetTokenHandler(parameters);
-
             var wifConfiguration = ((JwtIssuerServiceHost)OperationContext.Current.Host).Configuration;
             
             ClaimsIdentityCollection identities = null;
