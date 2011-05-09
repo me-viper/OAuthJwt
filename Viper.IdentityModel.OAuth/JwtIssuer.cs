@@ -32,14 +32,14 @@ namespace Viper.IdentityModel.OAuth
                 throw new WebFaultException(HttpStatusCode.BadRequest);
 
             var parameters = HttpUtility.ParseQueryString(postData);
-            var token = GetTokenHandler(parameters);
+            var tokenHandler = GetTokenHandler(parameters);
             var wifConfiguration = ((JwtIssuerServiceHost)OperationContext.Current.Host).Configuration;
             
             ClaimsIdentityCollection identities = null;
 
             try
             {
-                identities = wifConfiguration.SecurityTokenHandlers.ValidateToken(token);
+                identities = wifConfiguration.SecurityTokenHandlers.ValidateToken(tokenHandler);
             }
             catch (Exception)
             {

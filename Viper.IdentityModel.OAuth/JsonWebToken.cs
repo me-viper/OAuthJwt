@@ -46,7 +46,7 @@ namespace Viper.IdentityModel.OAuth
 
         public override ReadOnlyCollection<SecurityKey> SecurityKeys
         {
-            get { return (new List<SecurityKey>()).AsReadOnly(); }
+            get { return (new List<SecurityKey>(0)).AsReadOnly(); }
         }
 
         internal static string GetSigningInput(JwtHeaderSegment header, JwtClaimsSegment payload)
@@ -95,10 +95,12 @@ namespace Viper.IdentityModel.OAuth
 
         internal string GetRawToken()
         {
-            if (string.IsNullOrEmpty(Signature))
-                return GetSigningInput(HeaderSection, ClaimsSection);
+            var signingInput = GetSigningInput();
 
-            return string.Format("{0}.{1}", GetSigningInput(HeaderSection, ClaimsSection), Signature);
+            if (string.IsNullOrEmpty(Signature))
+                return signingInput;
+
+            return string.Format("{0}.{1}", signingInput, Signature);
         }
     }
 }
