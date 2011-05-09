@@ -3,9 +3,9 @@ using System.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
+
 using Microsoft.IdentityModel.Claims;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 
 namespace Viper.IdentityModel.OAuth
 {

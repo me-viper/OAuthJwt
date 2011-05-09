@@ -81,7 +81,7 @@ namespace Viper.IdentityModel.OAuth
         
         private static bool ContainsKey(NameObjectCollectionBase collection, string key)
         {
-            return collection.Keys.Cast<string>().Any(ckey => key.Equals(ckey, StringComparison.Ordinal));
+            return collection.Keys.Cast<string>().Any(ckey => ckey.Equals(key, StringComparison.Ordinal));
         }
     }
 }

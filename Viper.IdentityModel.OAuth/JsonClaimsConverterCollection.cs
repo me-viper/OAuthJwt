@@ -26,7 +26,6 @@ namespace Viper.IdentityModel.OAuth
                 if (reader.TokenType != JsonToken.StartObject)
                     break;
 
-
                 var jo = JObject.Load(reader);
                 var claim = new Claim(
                     (string)jo["ClaimType"],
