@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IdentityModel.Tokens;
-using System.Security.Cryptography;
 using System.Text;
+
 using Newtonsoft.Json;
 
 namespace Viper.IdentityModel.OAuth
 {
     public class JsonWebToken : SecurityToken
     {
-        public List<SecurityKey> _keys = new List<SecurityKey>();
-
         public JsonWebToken(
             JwtHeaderSegment header, 
             JwtClaimsSegment claims,
@@ -25,23 +23,6 @@ namespace Viper.IdentityModel.OAuth
             HeaderSection = header;
             ClaimsSection = claims;
             Signature = signature;
-        }
-
-        public JsonWebToken(
-            JwtHeaderSegment header, 
-            JwtClaimsSegment claims,
-            SecurityKey signingKey)
-        {
-            if (header == null)
-                throw new ArgumentNullException("header");
-            if (claims == null)
-                throw new ArgumentNullException("claims");
-            if (signingKey == null)
-                throw new ArgumentNullException("signingKey");
-
-            HeaderSection = header;
-            ClaimsSection = claims;
-            _keys.Add(signingKey);
         }
 
         public JwtHeaderSegment HeaderSection { get; private set; }
@@ -65,29 +46,59 @@ namespace Viper.IdentityModel.OAuth
 
         public override ReadOnlyCollection<SecurityKey> SecurityKeys
         {
-            get { return _keys.AsReadOnly(); }
+            get { return (new List<SecurityKey>()).AsReadOnly(); }
+        }
+
+        internal static string GetSigningInput(JwtHeaderSegment header, JwtClaimsSegment payload)
+        {
+            var decodedJwsHeaderInput = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(header));
+            var jwsHeaderInput = JwtTokenUtility.Base64UrlEncode(decodedJwsHeaderInput);
+
+            var decodedJwsPayloadInput = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload));
+            var jwsPaloadInput = JwtTokenUtility.Base64UrlEncode(decodedJwsPayloadInput);
+
+            return string.Format("{0}.{1}", jwsHeaderInput, jwsPaloadInput);
+        }
+
+        internal static JsonWebToken ParseRawToken(string rawToken)
+        {
+            JsonWebToken result = null;
+
+            var tokenParts = rawToken.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (tokenParts.Length > 3 || tokenParts.Length < 2)
+                throw new InvalidOperationException("Invalid token format.");
+
+            var rawJwtHeader = Encoding.UTF8.GetString(JwtTokenUtility.Base64UrlDecode(tokenParts[0]));
+            var rawJwtClaims = Encoding.UTF8.GetString(JwtTokenUtility.Base64UrlDecode(tokenParts[1]));
+            var signature = tokenParts.Length > 2 ? tokenParts[2] : string.Empty;
+
+            try
+            {
+                var headerSegment = JsonConvert.DeserializeObject<JwtHeaderSegment>(rawJwtHeader);
+                var claimsSegment = JsonConvert.DeserializeObject<JwtClaimsSegment>(rawJwtClaims);
+
+                result = new JsonWebToken(headerSegment, claimsSegment, signature);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to parse token", ex);
+            }
+
+            return result;
         }
 
         internal string GetSigningInput()
         {
-            return string.Format("{0}.{1}", GetJwsHeaderInput(), GetJwsPayloadInput());
+            return GetSigningInput(HeaderSection, ClaimsSection);
         }
 
-        internal string GetRawToken(string cryptoOutput)
+        internal string GetRawToken()
         {
-            return string.Format("{0}.{1}", GetSigningInput(), cryptoOutput);
-        }
+            if (string.IsNullOrEmpty(Signature))
+                return GetSigningInput(HeaderSection, ClaimsSection);
 
-        private string GetJwsHeaderInput()
-        {
-            var decodedJwsHeaderInput = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(HeaderSection));
-            return JwtTokenUtility.Base64UrlEncode(decodedJwsHeaderInput);
-        }
-
-        private string GetJwsPayloadInput()
-        {
-            var decodedJwsPayloadInput = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(ClaimsSection));
-            return JwtTokenUtility.Base64UrlEncode(decodedJwsPayloadInput);
+            return string.Format("{0}.{1}", GetSigningInput(HeaderSection, ClaimsSection), Signature);
         }
     }
 }

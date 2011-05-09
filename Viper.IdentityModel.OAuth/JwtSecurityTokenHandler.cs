@@ -42,34 +42,12 @@ namespace Viper.IdentityModel.OAuth
 
         public override SecurityToken ReadToken(XmlReader reader)
         {
-            SecurityToken result = null;
-
             if (!CanReadToken(reader))
                 throw new InvalidOperationException("Invalid token.");
 
             var buffer = reader.ReadContentAsString();
-            var tokenParts = buffer.Split(new[] {"."}, StringSplitOptions.RemoveEmptyEntries);
 
-            if (tokenParts.Length > 3 || tokenParts.Length < 2)
-                throw new InvalidOperationException("Invalid token format.");
-
-            var rawJwtHeader = Encoding.UTF8.GetString(JwtTokenUtility.Base64UrlDecode(tokenParts[0]));
-            var rawJwtClaims = Encoding.UTF8.GetString(JwtTokenUtility.Base64UrlDecode(tokenParts[1]));
-            var signature = tokenParts.Length > 2 ? tokenParts[2] : string.Empty;
-
-            try
-            {
-                var headerSegment = JsonConvert.DeserializeObject<JwtHeaderSegment>(rawJwtHeader);
-                var claimsSegment = JsonConvert.DeserializeObject<JwtClaimsSegment>(rawJwtClaims);
-
-                result = new JsonWebToken(headerSegment, claimsSegment, signature);
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Failed to parse token", ex);
-            }
-
-            return result;
+            return JsonWebToken.ParseRawToken(buffer);
         }
 
         public override ClaimsIdentityCollection ValidateToken(SecurityToken token)
@@ -113,9 +91,9 @@ namespace Viper.IdentityModel.OAuth
             if (token == null)
                 throw new ArgumentNullException("token");
 
-            string rawToken = GetRawTokenAndSign(token);
-
-            var wrappedElement = JwtTokenUtility.WrapInsideBinarySecurityToken(rawToken);
+            var wrappedElement = JwtTokenUtility.WrapInsideBinarySecurityToken(
+                ((JsonWebToken)token).GetRawToken()
+                );
 
             wrappedElement.WriteTo(writer);
         }
@@ -132,22 +110,12 @@ namespace Viper.IdentityModel.OAuth
                 tokenDescriptor.Subject.Claims
                 );
 
-            var key = tokenDescriptor.SigningCredentials.SigningKey;
-            
-            return new JsonWebToken(header, claims, key);
-        }
-
-        internal static string GetRawTokenAndSign(SecurityToken token)
-        {
-            var key = (InMemorySymmetricSecurityKey)token.SecurityKeys[0];
+            var key = (InMemorySymmetricSecurityKey)tokenDescriptor.SigningCredentials.SigningKey;
             var mac = new HMACSHA256(key.GetSymmetricKey());
-            
-            var jwt = (JsonWebToken)token;
-
-            var hash = mac.ComputeHash(Encoding.UTF8.GetBytes(jwt.GetSigningInput()));
+            var hash = mac.ComputeHash(Encoding.UTF8.GetBytes(JsonWebToken.GetSigningInput(header, claims)));
             var jwsCryptoOutput = JwtTokenUtility.Base64UrlEncode(hash);
 
-            return jwt.GetRawToken(jwsCryptoOutput);
+            return new JsonWebToken(header, claims, jwsCryptoOutput);
         }
     }
 }
