@@ -60,8 +60,8 @@ namespace Viper.IdentityModel.OAuth
                     };
                 var securityTokenService = wifConfiguration.CreateSecurityTokenService();
                 var rstr = securityTokenService.Issue(new ClaimsPrincipal(identities), rst);
-                var jwtToken = (JsonWebToken)rstr.RequestedSecurityToken.SecurityToken;
-                response = "wrap_access_token" + JwtSecurityTokenHandler.GetRawTokenAndSign(jwtToken);
+                var jwt = (JsonWebToken)rstr.RequestedSecurityToken.SecurityToken;
+                response = "wrap_access_token" + jwt.GetRawToken();
             }
             catch (Exception)
             {
