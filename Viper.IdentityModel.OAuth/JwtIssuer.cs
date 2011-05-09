@@ -76,6 +76,7 @@ namespace Viper.IdentityModel.OAuth
             if (ContainsKey(parameters, "wrap_name") && ContainsKey(parameters, "wrap_password"))
                 return new UserNameSecurityToken(parameters["wrap_name"], parameters["wrap_password"]);
 
+            // TODO: Support other token handlers.
             throw new NotSupportedException("Unsupported token type.");
         }
         
