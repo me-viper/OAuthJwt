@@ -8,8 +8,8 @@
     <ProjectGuid>{6FE12C8B-664A-4900-8A51-6723BF3F3437}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Viper.IdentityModel.OAuth</RootNamespace>
-    <AssemblyName>Viper.IdentityModel.OAuth</AssemblyName>
+    <RootNamespace>Talk2Bits.IdentityModel.OAuth</RootNamespace>
+    <AssemblyName>Talk2Bits.IdentityModel.OAuth</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

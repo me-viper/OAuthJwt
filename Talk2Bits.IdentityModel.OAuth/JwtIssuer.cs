@@ -13,7 +13,7 @@ using Microsoft.IdentityModel.Claims;
 using Microsoft.IdentityModel.Protocols.WSTrust;
 using Microsoft.IdentityModel.SecurityTokenService;
 
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     internal class JwtIssuer : IJwtIssuerContract
     {

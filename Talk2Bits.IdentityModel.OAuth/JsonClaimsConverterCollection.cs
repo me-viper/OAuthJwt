@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+
 using Microsoft.IdentityModel.Claims;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     /// <summary>
     /// Serializes and deserializes instance of type <see cref="Collection{Claim}"/> into JSON format.

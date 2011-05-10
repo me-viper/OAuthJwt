@@ -1,8 +1,6 @@
-using System;
-
 using Microsoft.IdentityModel.Configuration;
 
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     public class JwtIssuerConfiguration : SecurityTokenServiceConfiguration
     {        

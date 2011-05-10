@@ -46,10 +46,13 @@ namespace Viper.IdentityModel.OAuth
                     if (string.IsNullOrWhiteSpace(accessToken))
                         throw new WebFaultException(HttpStatusCode.Unauthorized);
                 }
+<<<<<<< HEAD
+=======
                 catch (WebFaultException)
                 {
                     throw;
                 }
+>>>>>>> minor fixes
                 catch (Exception)
                 {
                     throw new WebFaultException(HttpStatusCode.BadRequest);

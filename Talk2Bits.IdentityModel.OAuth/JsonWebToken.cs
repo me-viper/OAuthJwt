@@ -6,7 +6,7 @@ using System.Text;
 
 using Newtonsoft.Json;
 
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     public class JsonWebToken : SecurityToken
     {
