@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestIssuer", "TestIssuer\TestIssuer.csproj", "{BE5808F2-02FC-4183-BB98-0A3C370CC497}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talk2Bits.IdentityModel.OAuth", "Viper.IdentityModel.OAuth\Talk2Bits.IdentityModel.OAuth.csproj", "{6FE12C8B-664A-4900-8A51-6723BF3F3437}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talk2Bits.IdentityModel.OAuth", "Talk2Bits.IdentityModel.OAuth\Talk2Bits.IdentityModel.OAuth.csproj", "{6FE12C8B-664A-4900-8A51-6723BF3F3437}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestIssuer", "TestIssuer\TestIssuer.csproj", "{BE5808F2-02FC-4183-BB98-0A3C370CC497}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,16 +25,6 @@ Global
 		{BE5808F2-02FC-4183-BB98-0A3C370CC497}.Release|Mixed Platforms.Build.0 = Release|x86
 		{BE5808F2-02FC-4183-BB98-0A3C370CC497}.Release|x86.ActiveCfg = Release|x86
 		{BE5808F2-02FC-4183-BB98-0A3C370CC497}.Release|x86.Build.0 = Release|x86
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{6FE12C8B-664A-4900-8A51-6723BF3F3437}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
