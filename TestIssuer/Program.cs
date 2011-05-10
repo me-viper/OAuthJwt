@@ -81,6 +81,7 @@ namespace TestIssuer
 
             public override RequestSecurityTokenResponse Issue(IClaimsPrincipal principal, RequestSecurityToken request)
             {
+                //- Just to enable break points, should be removed. -
                 return base.Issue(principal, request);
             }
 
