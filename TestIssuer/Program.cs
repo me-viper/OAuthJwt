@@ -24,7 +24,16 @@ namespace TestIssuer
 
         public override ClaimsIdentityCollection ValidateToken(SecurityToken token)
         {
-               
+            var userName = ((UserNameSecurityToken)token).UserName;
+            IClaimsIdentity identity = new ClaimsIdentity(
+                new [] { new Claim(ClaimTypes.Name, userName) },
+                AuthenticationMethods.Password
+                );
+
+            if (Configuration.SaveBootstrapTokens)
+                identity.BootstrapToken = RetainPassword ? token : new UserNameSecurityToken(userName, null);
+
+            return new ClaimsIdentityCollection(new [] { identity });
         }
     }
 
@@ -35,9 +44,9 @@ namespace TestIssuer
             var config = new JwtIssuerConfiguration { SecurityTokenService = typeof(JwtSecurityTokenService) };
             config.TokenIssuerName = "MyCustomIssuer";
 
-            config.SecurityTokenHandlers.AddOrReplace();
+            config.SecurityTokenHandlers.AddOrReplace(new UserNamePasswordSecurityTokenHandler());
 
-            var wsh = new OAuthServiceHost(config, new Uri("http://localhost:9111/WRAPv0.9"));
+            var wsh = new JwtIssuerServiceHost(config, new Uri("http://localhost:9111/WRAPv0.9"));
             wsh.Open();
 
             foreach (var ep in wsh.Description.Endpoints)
@@ -66,6 +75,7 @@ namespace TestIssuer
                 scope.TokenEncryptionRequired = false;
                 scope.SymmetricKeyEncryptionRequired = false;
                 scope.SigningCredentials = new SymmetricSigningCredentials("Sapm9PPZZHly7a9319mksllija112suapoqc321jvso=");
+
                 return scope;
             }
 

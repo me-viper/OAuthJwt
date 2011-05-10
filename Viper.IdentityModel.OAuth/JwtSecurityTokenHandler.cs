@@ -1,6 +1,7 @@
 using System;
 using System.IdentityModel.Tokens;
 using System.Security.Cryptography;
+using System.ServiceModel.Security;
 using System.Text;
 using System.Xml;
 using Microsoft.IdentityModel.Claims;
@@ -76,7 +77,19 @@ namespace Viper.IdentityModel.OAuth
             var jwt = (JsonWebToken)token;
 
             // ! Resolve signing key here !
-            var key = new InMemorySymmetricSecurityKey(null);
+            InMemorySymmetricSecurityKey key = null;
+            
+            try
+            {
+                key = new InMemorySymmetricSecurityKey(
+                    Configuration.IssuerTokenResolver.ResolveSecurityKey(new KeyNameIdentifierClause(jwt.Issuer))
+                    );
+            }
+            catch (Exception)
+            {
+                Console.WriteLine();
+            }
+
             var mac = new HMACSHA256(key.GetSymmetricKey());
             
             var jwsSigningInput = string.Format(

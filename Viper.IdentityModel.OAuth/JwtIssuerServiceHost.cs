@@ -11,6 +11,10 @@ namespace Viper.IdentityModel.OAuth
         {
         }
 
+        public JwtIssuerServiceHost(JwtIssuerConfiguration configuration, Uri baseAddress)
+            : this(typeof(JwtIssuerServiceHost), new[] { baseAddress }, configuration)
+        {}
+
         public JwtIssuerServiceHost(
             Type serviceType, 
             Uri[] baseAddresses, 
