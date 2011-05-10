@@ -8,6 +8,7 @@ using System.ServiceModel.Security;
 using System.ServiceModel.Web;
 
 using Microsoft.IdentityModel.Claims;
+using Microsoft.IdentityModel.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.ServiceModel.Web;
 
@@ -15,7 +16,7 @@ namespace Talk2Bits.IdentityModel.OAuth
 {
     public class JwtRequestInterceptor : RequestInterceptor
     {
-        private const string AccessTokenPrefix = "WRAP access_token";
+        private const string AccessTokenPrefix = "wrap_access_token";
 
         private FederatedServiceCredentials _wifCredentials;
 
@@ -27,6 +28,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             _wifCredentials = bindingContext.BindingParameters.Find<FederatedServiceCredentials>();
             if (_wifCredentials == null)
                 throw new InvalidOperationException("WIF is not configured.");
+                        
         }
 
         public override void ProcessRequest(ref RequestContext requestContext)

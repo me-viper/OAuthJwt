@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens;
-using System.Linq;
-using System.Text;
-using System.Xml;
 
 using Microsoft.IdentityModel.Claims;
 using Microsoft.IdentityModel.Configuration;
 using Microsoft.IdentityModel.Protocols.WSTrust;
 using Microsoft.IdentityModel.SecurityTokenService;
-using Microsoft.IdentityModel.Tokens;
 
 using Talk2Bits.IdentityModel.OAuth;
 
@@ -31,6 +25,7 @@ namespace TestIssuer
             {
                 Console.WriteLine(ep.ListenUri);
             }
+
             Console.WriteLine("OAuth Issuer Ready...");
             Console.ReadLine();
 
@@ -55,12 +50,6 @@ namespace TestIssuer
                 scope.SigningCredentials = new SymmetricSigningCredentials("Sapm9PPZZHly7a9319mksllija112suapoqc321jvso=");
 
                 return scope;
-            }
-
-            public override RequestSecurityTokenResponse Issue(IClaimsPrincipal principal, RequestSecurityToken request)
-            {
-                // - Just to enable break points. Should be removed later.
-                return base.Issue(principal, request);
             }
 
             protected override IClaimsIdentity GetOutputClaimsIdentity(
