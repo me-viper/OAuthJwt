@@ -1,7 +1,9 @@
 using System;
 using System.IdentityModel.Tokens;
+using System.Net;
 using System.Security.Cryptography;
 using System.ServiceModel.Security;
+using System.ServiceModel.Web;
 using System.Text;
 using System.Xml;
 
@@ -59,13 +61,13 @@ namespace Viper.IdentityModel.OAuth
             
             try
             {
-                key = new InMemorySymmetricSecurityKey(
-                    Configuration.IssuerTokenResolver.ResolveSecurityKey(new KeyNameIdentifierClause(jwt.Issuer))
+                key = (InMemorySymmetricSecurityKey)Configuration.IssuerTokenResolver.ResolveSecurityKey(
+                    new KeyNameIdentifierClause(jwt.ClaimsSection.Issuer)
                     );
             }
             catch (Exception)
             {
-                Console.WriteLine();
+                throw new WebFaultException<string>("Failed to resolver isser's key", HttpStatusCode.Unauthorized);
             }
 
             var mac = new HMACSHA256(key.GetSymmetricKey());
@@ -116,6 +118,15 @@ namespace Viper.IdentityModel.OAuth
             var jwsCryptoOutput = JwtTokenUtility.Base64UrlEncode(hash);
 
             return new JsonWebToken(header, claims, jwsCryptoOutput);
+        }
+
+        public override SecurityKeyIdentifierClause CreateSecurityTokenReference(SecurityToken token, bool attached)
+        {
+            var jwt = token as JsonWebToken;
+            if (jwt == null)
+                throw new InvalidOperationException("JsonWebToken expected.");
+
+            return new KeyNameIdentifierClause(jwt.ClaimsSection.Issuer);
         }
     }
 }

@@ -11,6 +11,7 @@ using System.Web;
 
 using Microsoft.IdentityModel.Claims;
 using Microsoft.IdentityModel.Protocols.WSTrust;
+using Microsoft.IdentityModel.SecurityTokenService;
 
 namespace Viper.IdentityModel.OAuth
 {
@@ -33,6 +34,10 @@ namespace Viper.IdentityModel.OAuth
 
             var parameters = HttpUtility.ParseQueryString(postData);
             var tokenHandler = GetTokenHandler(parameters);
+
+            if (!ContainsKey(parameters, "wrap_scope"))
+                throw new WebFaultException(HttpStatusCode.BadRequest);
+
             var wifConfiguration = ((JwtIssuerServiceHost)OperationContext.Current.Host).Configuration;
             
             ClaimsIdentityCollection identities = null;
@@ -50,9 +55,9 @@ namespace Viper.IdentityModel.OAuth
 
             try
             {
-                var rst = new RequestSecurityToken(JwtSecurityTokenHandler.TokenTypeIdentifier)
+                var rst = new RequestSecurityToken(RequestTypes.Issue)
                     {
-                        RequestType = WSTrust13Constants.RequestTypes.Issue,
+                        TokenType = JwtSecurityTokenHandler.TokenTypeIdentifier,
                         AppliesTo = ContainsKey(parameters, "wrap_scope")
                             ? new EndpointAddress(parameters["wrap_scope"])
                             : null
@@ -60,7 +65,7 @@ namespace Viper.IdentityModel.OAuth
                 var securityTokenService = wifConfiguration.CreateSecurityTokenService();
                 var rstr = securityTokenService.Issue(new ClaimsPrincipal(identities), rst);
                 var jwt = (JsonWebToken)rstr.RequestedSecurityToken.SecurityToken;
-                response = "wrap_access_token" + jwt.GetRawToken();
+                response = "wrap_access_token=" + jwt.GetRawToken();
             }
             catch (Exception)
             {

@@ -74,6 +74,7 @@
     <Compile Include="JwtIssuer.cs" />
     <Compile Include="JwtRequestInterceptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SymmetricSigningiCredentials.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

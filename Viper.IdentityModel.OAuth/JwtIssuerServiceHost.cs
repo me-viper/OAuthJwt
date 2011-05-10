@@ -1,18 +1,19 @@
 using System;
+using System.ServiceModel.Web;
 
 using Microsoft.ServiceModel.Web;
 
 namespace Viper.IdentityModel.OAuth
 {
-    public class JwtIssuerServiceHost : WebServiceHost2
+    public class JwtIssuerServiceHost : WebServiceHost
     {
         public JwtIssuerServiceHost(JwtIssuerConfiguration configuration)
-            : this(typeof(JwtIssuerServiceHost), null, configuration)
+            : this(typeof(JwtIssuer), null, configuration)
         {
         }
 
         public JwtIssuerServiceHost(JwtIssuerConfiguration configuration, Uri baseAddress)
-            : this(typeof(JwtIssuerServiceHost), new[] { baseAddress }, configuration)
+            : this(typeof(JwtIssuer), new[] { baseAddress }, configuration)
         {}
 
         public JwtIssuerServiceHost(
