@@ -1,7 +1,7 @@
 using System;
 using System.IdentityModel.Tokens;
 
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     public class SymmetricSigningCredentials : SigningCredentials
     {

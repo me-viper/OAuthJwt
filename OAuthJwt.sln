@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Viper.IdentityModel.OAuth", "Viper.IdentityModel.OAuth\Viper.IdentityModel.OAuth.csproj", "{6FE12C8B-664A-4900-8A51-6723BF3F3437}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talk2Bits.IdentityModel.OAuth", "Viper.IdentityModel.OAuth\Talk2Bits.IdentityModel.OAuth.csproj", "{6FE12C8B-664A-4900-8A51-6723BF3F3437}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestIssuer", "TestIssuer\TestIssuer.csproj", "{BE5808F2-02FC-4183-BB98-0A3C370CC497}"
 EndProject

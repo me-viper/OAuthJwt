@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Protocols.WSTrust;
 using Microsoft.IdentityModel.SecurityTokenService;
 using Microsoft.IdentityModel.Tokens;
 
-using Viper.IdentityModel.OAuth;
+using Talk2Bits.IdentityModel.OAuth;
 
 namespace TestIssuer
 {

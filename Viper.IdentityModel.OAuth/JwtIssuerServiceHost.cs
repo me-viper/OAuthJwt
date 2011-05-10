@@ -1,9 +1,7 @@
 using System;
 using System.ServiceModel.Web;
 
-using Microsoft.ServiceModel.Web;
-
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     public class JwtIssuerServiceHost : WebServiceHost
     {

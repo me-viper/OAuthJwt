@@ -1,7 +1,7 @@
 using System;
 using System.Xml.Linq;
 
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     public class JwtTokenUtility
     {

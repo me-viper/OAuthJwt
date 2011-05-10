@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Claims;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.ServiceModel.Web;
 
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     public class JwtRequestInterceptor : RequestInterceptor
     {

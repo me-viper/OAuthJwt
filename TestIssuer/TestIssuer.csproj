@@ -60,9 +60,9 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Viper.IdentityModel.OAuth\Viper.IdentityModel.OAuth.csproj">
+    <ProjectReference Include="..\Viper.IdentityModel.OAuth\Talk2Bits.IdentityModel.OAuth.csproj">
       <Project>{6FE12C8B-664A-4900-8A51-6723BF3F3437}</Project>
-      <Name>Viper.IdentityModel.OAuth</Name>
+      <Name>Talk2Bits.IdentityModel.OAuth</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -10,7 +10,7 @@ using System.Xml;
 using Microsoft.IdentityModel.Claims;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     public class JwtSecurityTokenHandler : SecurityTokenHandler
     {

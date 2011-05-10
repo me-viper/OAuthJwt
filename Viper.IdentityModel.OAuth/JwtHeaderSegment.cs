@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Viper.IdentityModel.OAuth
+namespace Talk2Bits.IdentityModel.OAuth
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class JwtHeaderSegment
