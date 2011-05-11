@@ -12,6 +12,10 @@ namespace Talk2Bits.IdentityModel.OAuth
     {
         private List<Claim> _claims;
 
+        public JwtClaimsSegment()
+        {            
+        }
+
         public JwtClaimsSegment(
             string issuer, 
             string audience, 

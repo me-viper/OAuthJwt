@@ -47,6 +47,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             if (!CanReadToken(reader))
                 throw new InvalidOperationException("Invalid token.");
 
+            reader.Read();
             var buffer = reader.ReadContentAsString();
 
             return JsonWebToken.ParseRawToken(buffer);

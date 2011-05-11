@@ -4,11 +4,11 @@ using System.IdentityModel.Policy;
 using System.Net;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.ServiceModel.Web;
 
 using Microsoft.IdentityModel.Claims;
-using Microsoft.IdentityModel.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.ServiceModel.Web;
 
@@ -20,15 +20,15 @@ namespace Talk2Bits.IdentityModel.OAuth
 
         private FederatedServiceCredentials _wifCredentials;
 
-        public JwtRequestInterceptor(BindingContext bindingContext) : base(true)
+        public JwtRequestInterceptor(ServiceCredentials credentials) : base(true)
         {
-            if (bindingContext == null)
-                throw new ArgumentNullException("bindingContext");
+            if (credentials == null)
+                throw new ArgumentNullException("credentials");
 
-            _wifCredentials = bindingContext.BindingParameters.Find<FederatedServiceCredentials>();
+            _wifCredentials = credentials as FederatedServiceCredentials;
+
             if (_wifCredentials == null)
-                throw new InvalidOperationException("WIF is not configured.");
-                        
+                throw new InvalidOperationException("WIF is not configured.");                        
         }
 
         public override void ProcessRequest(ref RequestContext requestContext)
