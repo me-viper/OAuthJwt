@@ -5,7 +5,7 @@ using System.ServiceModel.Web;
 namespace Talk2Bits.IdentityModel.OAuth
 {
     [ServiceContract]
-    public interface IJwtIssuerContract
+    public interface IOAuthIssuerContract
     {
         [WebInvoke(UriTemplate = "")]
         Stream Issue(Stream request);

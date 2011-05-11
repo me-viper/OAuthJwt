@@ -16,7 +16,7 @@ namespace Talk2Bits.IdentityModel.OAuth
 {
     public class JwtRequestInterceptor : RequestInterceptor
     {
-        private const string AccessTokenPrefix = "wrap_access_token";
+        private const string AccessTokenPrefix = "JWT ";
 
         private FederatedServiceCredentials _wifCredentials;
 
@@ -93,11 +93,12 @@ namespace Talk2Bits.IdentityModel.OAuth
             if (string.IsNullOrWhiteSpace(authorizationHeader))
                 return null;
 
-            var auth = authorizationHeader.Remove(0, AccessTokenPrefix.Length).TrimStart(' ');
-            if (auth[0] != '=')
+            var auth = authorizationHeader.Trim();
+
+            if (!auth.StartsWith(AccessTokenPrefix))
                 return null;
 
-            return auth.TrimStart('=', ' ').Trim('"');
+            return authorizationHeader.Remove(0, AccessTokenPrefix.Length).Trim();
         }
     }
 }

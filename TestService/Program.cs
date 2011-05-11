@@ -1,13 +1,11 @@
 ﻿using System;
 using System.IdentityModel.Tokens;
 using System.ServiceModel;
-using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Threading;
 
 using Microsoft.IdentityModel.Claims;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.ServiceModel.Web;
 
 using Talk2Bits.IdentityModel.OAuth;
 
@@ -38,6 +36,7 @@ namespace TestService
                     }
                 }
             }
+
             return "Hello, World";
         }
     }
@@ -46,10 +45,7 @@ namespace TestService
     {
         public static void Main(string[] args)
         {
-            var host = new WebServiceHost2(typeof(TestService), false, new Uri("http://localhost:9090"));
-            host.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
-            FederatedServiceCredentials.ConfigureServiceHost(host);
-            host.Interceptors.Add(new JwtRequestInterceptor(host.Credentials));            
+            var host = new OAuthWebServiceHost(typeof(TestService), new Uri("http://localhost:9090"));
             host.Open();
 
             foreach (var ep in host.Description.Endpoints)

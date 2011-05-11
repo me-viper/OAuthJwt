@@ -15,7 +15,7 @@ using Microsoft.IdentityModel.SecurityTokenService;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
-    internal class JwtIssuer : IJwtIssuerContract
+    internal class JwtIssuer : IOAuthIssuerContract
     {
         public Stream Issue(Stream request)
         {
@@ -35,7 +35,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             var parameters = HttpUtility.ParseQueryString(postData);
             var tokenHandler = GetTokenHandler(parameters);
 
-            if (!ContainsKey(parameters, "wrap_scope"))
+            if (!ContainsKey(parameters, OAuthParameters.Scope))
                 throw new WebFaultException(HttpStatusCode.BadRequest);
 
             var wifConfiguration = ((JwtIssuerServiceHost)OperationContext.Current.Host).Configuration;
@@ -58,14 +58,15 @@ namespace Talk2Bits.IdentityModel.OAuth
                 var rst = new RequestSecurityToken(RequestTypes.Issue)
                     {
                         TokenType = JwtSecurityTokenHandler.TokenTypeIdentifier,
-                        AppliesTo = ContainsKey(parameters, "wrap_scope")
-                            ? new EndpointAddress(parameters["wrap_scope"])
+                        AppliesTo = ContainsKey(parameters, OAuthParameters.Scope)
+                            ? new EndpointAddress(parameters[OAuthParameters.Scope])
                             : null
                     };
                 var securityTokenService = wifConfiguration.CreateSecurityTokenService();
                 var rstr = securityTokenService.Issue(new ClaimsPrincipal(identities), rst);
                 var jwt = (JsonWebToken)rstr.RequestedSecurityToken.SecurityToken;
-                response = "wrap_access_token=" + jwt.GetRawToken();
+                
+                response = string.Format("{{\"access_token\":\"{0}\",\"token_type\":\"jwt\"}}", jwt.GetRawToken());
             }
             catch (Exception)
             {
@@ -77,8 +78,8 @@ namespace Talk2Bits.IdentityModel.OAuth
 
         private static SecurityToken GetTokenHandler(NameValueCollection parameters)
         {
-            if (ContainsKey(parameters, "wrap_name") && ContainsKey(parameters, "wrap_password"))
-                return new UserNameSecurityToken(parameters["wrap_name"], parameters["wrap_password"]);
+            if (ContainsKey(parameters, OAuthParameters.UserName) && ContainsKey(parameters, OAuthParameters.Password))
+                return new UserNameSecurityToken(parameters[OAuthParameters.UserName], parameters[OAuthParameters.Password]);
 
             // TODO: Support other token handlers.
             throw new NotSupportedException("Unsupported token type.");

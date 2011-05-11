@@ -61,7 +61,8 @@ namespace TestIssuer
                     new []
                         {
                             new Claim(ClaimTypes.Name, "Test"),
-                            new Claim("Role", "Administrator")
+                            new Claim("Role", "Administrator"),
+                            new Claim(ClaimTypes.AuthenticationMethod, "OAuth")
                         }
                     );
             }

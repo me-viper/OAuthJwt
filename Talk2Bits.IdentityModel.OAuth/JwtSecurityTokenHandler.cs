@@ -56,8 +56,6 @@ namespace Talk2Bits.IdentityModel.OAuth
         public override ClaimsIdentityCollection ValidateToken(SecurityToken token)
         {
             var jwt = (JsonWebToken)token;
-
-            // ! Resolve signing key here !
             InMemorySymmetricSecurityKey key = null;
             
             try
