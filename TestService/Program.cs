@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.ServiceModel.Web;
 using System.Text;
@@ -50,6 +51,7 @@ namespace TestService
         public static void Main(string[] args)
         {
             var host = new WebServiceHost2(typeof(TestService), false, new Uri("http://localhost:9090"));
+            host.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
             FederatedServiceCredentials.ConfigureServiceHost(host);
             host.Interceptors.Add(new JwtRequestInterceptor(host.Credentials));            
             host.Open();
