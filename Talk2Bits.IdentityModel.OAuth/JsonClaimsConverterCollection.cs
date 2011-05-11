@@ -16,7 +16,33 @@ namespace Talk2Bits.IdentityModel.OAuth
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            serializer.Serialize(writer, value);
+            var claims = (IEnumerable<Claim>)value;
+
+            writer.WriteStartObject();
+            writer.WritePropertyName("http://schemas.bradycorp.com/2010/03/jwt/claims");
+            
+            writer.WriteStartArray();
+
+            foreach (var claim in claims)
+            {
+                writer.WriteStartObject();
+                writer.WritePropertyName("ClaimType");
+                writer.WriteValue(claim.ClaimType);
+                writer.WritePropertyName("Value");
+                writer.WriteValue(claim.Value);
+                writer.WritePropertyName("ValueType");
+                writer.WriteValue(claim.ValueType);
+                writer.WritePropertyName("Issuer");
+                writer.WriteValue(claim.Issuer);
+                writer.WritePropertyName("OriginalIssuer");
+                writer.WriteValue(claim.OriginalIssuer);
+                writer.WritePropertyName("Properties");
+                serializer.Serialize(writer, claim.Properties);
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+            writer.WriteEndObject();
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -25,8 +51,11 @@ namespace Talk2Bits.IdentityModel.OAuth
 
             while (reader.Read())
             {
-                if (reader.TokenType != JsonToken.StartObject)
+                if (reader.TokenType == JsonToken.EndArray)
                     break;
+
+                if (reader.TokenType != JsonToken.StartObject)
+                    continue;
 
                 var jo = JObject.Load(reader);
                 var claim = new Claim(
@@ -44,6 +73,9 @@ namespace Talk2Bits.IdentityModel.OAuth
                 
                 result.Add(claim);
             }
+
+            // Reading EndObject;
+            reader.Read();
 
             return result;
         }
