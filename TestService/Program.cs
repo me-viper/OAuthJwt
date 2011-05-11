@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens;
-using System.Linq;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
-using System.ServiceModel.Security;
 using System.ServiceModel.Web;
-using System.Text;
 using System.Threading;
 
 using Microsoft.IdentityModel.Claims;
@@ -36,6 +31,7 @@ namespace TestService
                     Console.WriteLine("Name: " + id.Name);
                     Console.WriteLine();
                     Console.WriteLine("Claims...");
+
                     foreach (var c in id.Claims)
                     {
                         Console.WriteLine(c.ClaimType + ": " + c.Value);
@@ -73,35 +69,10 @@ namespace TestService
         {
             var jwt = securityToken as JsonWebToken;
             if (jwt == null)
-                throw new InvalidOperationException("SimpleWebToken is expected.");
+                throw new InvalidOperationException("JsonWebToken is expected.");
 
-            //All issuers are trusted :)
+            // All issuers are trusted.
             return jwt.ClaimsSection.Issuer;
-        }
-    }
-
-    public class WrapIssuerTokenResolver : IssuerTokenResolver
-    {
-        IDictionary<string, SecurityKey> _keyMap;
-
-        public WrapIssuerTokenResolver()
-        {
-            // add all trusted issuers in following _keyMap
-            _keyMap = new Dictionary<string, SecurityKey> 
-                {
-                    {
-                        "MyCustomIssuer",  
-                        new InMemorySymmetricSecurityKey(Convert.FromBase64String("Sapm9PPZZHly7a9319mksllija112suapoqc321jvso="))
-                    }
-                };
-        }
-
-        protected override bool TryResolveSecurityKeyCore(SecurityKeyIdentifierClause keyIdentifierClause, out SecurityKey key)
-        {
-            key = null;
-            var nameClause = keyIdentifierClause as KeyNameIdentifierClause;
-
-            return nameClause != null && _keyMap.TryGetValue(nameClause.KeyName, out key);
         }
     }
 }
