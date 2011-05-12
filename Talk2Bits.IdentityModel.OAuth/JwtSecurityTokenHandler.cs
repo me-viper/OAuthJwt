@@ -1,4 +1,5 @@
 using System;
+using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using System.Net;
 using System.Security.Cryptography;
@@ -79,8 +80,22 @@ namespace Talk2Bits.IdentityModel.OAuth
                 throw new InvalidOperationException("Token contents do not match signature.");
 
             // TODO: Expiration validation.
-            // TODO: Issuer validation.
-            // TODO: Audience uri validation.
+            
+            // TODO: Audience uri bearer token check.
+            if (Configuration.AudienceRestriction.AudienceMode != AudienceUriMode.Never)
+            {
+                if (string.IsNullOrWhiteSpace(jwt.ClaimsSection.Audience))
+                    throw new InvalidOperationException("Token does not contain Audience uri.");
+
+                var uri = new Uri(jwt.ClaimsSection.Audience);
+                
+                if (!Configuration.AudienceRestriction.AllowedAudienceUris.Contains(uri))
+                {
+                    throw new InvalidOperationException(
+                        string.Format("Uri {0} is not spceified in audience uri section", uri.ToString())
+                        );
+                }
+            }
 
             var inputIdentity = new ClaimsIdentity(jwt.ClaimsSection.Claims);
 
