@@ -73,6 +73,9 @@ namespace Talk2Bits.IdentityModel.OAuth
                 throw new WebFaultException<string>("Failed to issue security token.", HttpStatusCode.BadRequest);
             }
 
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/json";
+            WebOperationContext.Current.OutgoingResponse.Headers[HttpResponseHeader.CacheControl] = "no-store";
+            
             return new MemoryStream(Encoding.ASCII.GetBytes(response));
         }
 
