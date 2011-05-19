@@ -78,6 +78,7 @@
     <Compile Include="OAuthError.cs" />
     <Compile Include="OAuthIssuer.cs" />
     <Compile Include="OAuthParameters.cs" />
+    <Compile Include="OAuthTokenResponse.cs" />
     <Compile Include="OAuthWebException.cs" />
     <Compile Include="OAuthWebServiceHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

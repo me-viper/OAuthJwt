@@ -67,7 +67,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             var tokenParts = rawToken.Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
 
             if (tokenParts.Length > 3 || tokenParts.Length < 2)
-                throw new InvalidOperationException("Invalid token format.");
+                throw new SecurityTokenException("Invalid token format.");
 
             var rawJwtHeader = Encoding.UTF8.GetString(JwtTokenUtility.Base64UrlDecode(tokenParts[0]));
             var rawJwtClaims = Encoding.UTF8.GetString(JwtTokenUtility.Base64UrlDecode(tokenParts[1]));
@@ -82,7 +82,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Failed to parse token", ex);
+                throw new SecurityTokenException("Failed to parse token", ex);
             }
 
             return result;

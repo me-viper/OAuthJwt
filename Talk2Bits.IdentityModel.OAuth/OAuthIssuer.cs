@@ -12,6 +12,9 @@ using System.Web;
 using Microsoft.IdentityModel.Claims;
 using Microsoft.IdentityModel.Protocols.WSTrust;
 using Microsoft.IdentityModel.SecurityTokenService;
+using Microsoft.IdentityModel.Tokens;
+
+using Newtonsoft.Json;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
@@ -35,15 +38,32 @@ namespace Talk2Bits.IdentityModel.OAuth
             if (string.IsNullOrWhiteSpace(postData))
                 throw new OAuthWebException(OAuthError.InvalidRequest);
 
-            return Issue(postData);
+            Stream response = null;
+
+            try
+            {
+                response = Issue(postData);
+            }
+            catch (Exception)
+            {
+                throw new OAuthWebException(HttpStatusCode.InternalServerError);
+            }
+
+            return response;
         }
         
-        protected abstract void WriteToken(Stream response, SecurityToken token);
+        protected abstract OAuthTokenResponse GetResponse(SecurityToken token);
 
-        protected virtual SecurityToken GetTokenHandler(NameValueCollection parameters)
+        protected virtual void PrepareRequestSecurityToken(RequestSecurityToken rst)
+        {}
+
+        protected virtual string GetTokenUsage()
         {
-            var grantType = GetParameterOrThrow(parameters, OAuthParameters.GrantType);
+            return SecurityTokenHandlerCollectionManager.Usage.Default;
+        }
 
+        protected virtual SecurityToken GetSecurityToken(NameValueCollection parameters, string grantType)
+        {
             if (string.Equals(grantType, OAuthGrantTypes.Password, StringComparison.OrdinalIgnoreCase))
             {
                 var userName = GetParameterOrThrow(parameters, OAuthParameters.UserName);
@@ -52,11 +72,10 @@ namespace Talk2Bits.IdentityModel.OAuth
                 return new UserNameSecurityToken(userName, password);
             }
 
-            // TODO: Support other token handlers.
             throw new OAuthWebException(OAuthError.UnsupportedGrantType);
         }
 
-        private static string GetParameterOrThrow(NameValueCollection parameters, string parameter)
+        protected static string GetParameterOrThrow(NameValueCollection parameters, string parameter)
         {
             if (!ContainsKey(parameters, parameter))
                 throw new OAuthWebException(OAuthError.InvalidRequest, string.Format("{0} is not specified.", parameter));
@@ -64,7 +83,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             return parameters[parameter];
         }
 
-        private static bool ContainsKey(NameObjectCollectionBase collection, string key)
+        protected static bool ContainsKey(NameObjectCollectionBase collection, string key)
         {
             return collection.Keys.Cast<string>().Any(ckey => ckey.Equals(key, StringComparison.Ordinal));
         }
@@ -72,40 +91,43 @@ namespace Talk2Bits.IdentityModel.OAuth
         private Stream Issue(string requestParameters)
         {
             var parameters = HttpUtility.ParseQueryString(requestParameters);
-            var tokenHandler = GetTokenHandler(parameters);
-
-            if (!ContainsKey(parameters, OAuthParameters.Scope))
-                throw new OAuthWebException(OAuthError.InvalidRequest);
+            var grantType = GetParameterOrThrow(parameters, OAuthParameters.GrantType);
+            var securityToken = GetSecurityToken(parameters, grantType);
 
             var wifConfiguration = ((OAuthIssuerServiceHost)OperationContext.Current.Host).Configuration;
-
             ClaimsIdentityCollection identities = null;
 
             try
             {
-                identities = wifConfiguration.SecurityTokenHandlers.ValidateToken(tokenHandler);
+                identities = wifConfiguration.SecurityTokenHandlerCollectionManager[GetTokenUsage()].ValidateToken(securityToken);
             }
-            catch (Exception)
+            catch (AudienceUriValidationFailedException)
+            {
+                throw new OAuthWebException(OAuthError.InvalidScope);
+            }
+            catch (SecurityTokenValidationException)
             {
                 throw new OAuthWebException(OAuthError.InvalidGrant);
             }
+            catch (Exception)
+            {
+                throw new OAuthWebException(HttpStatusCode.InternalServerError);
+            }
 
-            var response = new MemoryStream();
+            RequestSecurityTokenResponse rstr = null;
 
             try
             {
                 var rst = new RequestSecurityToken(RequestTypes.Issue)
-                {
-                    TokenType = TokenTypeIdentifier,
-                    AppliesTo = ContainsKey(parameters, OAuthParameters.Scope)
-                        ? new EndpointAddress(parameters[OAuthParameters.Scope])
-                        : null
-                };
+                    {
+                        TokenType = TokenTypeIdentifier,
+                        AppliesTo = ContainsKey(parameters, OAuthParameters.Scope)
+                            ? new EndpointAddress(parameters[OAuthParameters.Scope])
+                            : null
+                    };
+                PrepareRequestSecurityToken(rst);
                 var securityTokenService = wifConfiguration.CreateSecurityTokenService();
-                var rstr = securityTokenService.Issue(new ClaimsPrincipal(identities), rst);
-
-                WriteToken(response, rstr.RequestedSecurityToken.SecurityToken);
-                response.Seek(0, SeekOrigin.Begin);
+                rstr = securityTokenService.Issue(new ClaimsPrincipal(identities), rst);                
             }
             catch (InvalidRequestException)
             {
@@ -116,7 +138,13 @@ namespace Talk2Bits.IdentityModel.OAuth
                 throw new OAuthWebException(OAuthError.InvalidClient, "Failed to issue security token");
             }
 
-            return response;
+            var token = GetResponse(rstr.RequestedSecurityToken.SecurityToken);
+            if (token == null || !token.Validate())
+                throw new OAuthWebException(HttpStatusCode.InternalServerError);
+
+            var tokenString = JsonConvert.SerializeObject(token);
+            
+            return new MemoryStream(Encoding.ASCII.GetBytes(tokenString));
         }
     }
 }

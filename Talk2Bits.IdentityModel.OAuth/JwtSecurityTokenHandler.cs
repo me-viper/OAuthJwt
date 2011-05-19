@@ -4,11 +4,11 @@ using System.IdentityModel.Tokens;
 using System.Net;
 using System.Security.Cryptography;
 using System.ServiceModel.Security;
-using System.ServiceModel.Web;
 using System.Text;
 using System.Xml;
 
 using Microsoft.IdentityModel.Claims;
+using Microsoft.IdentityModel.Protocols.XmlSignature;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Talk2Bits.IdentityModel.OAuth
@@ -56,6 +56,9 @@ namespace Talk2Bits.IdentityModel.OAuth
 
         public override ClaimsIdentityCollection ValidateToken(SecurityToken token)
         {
+            if (token == null)
+                throw new ArgumentNullException("token");
+
             var jwt = (JsonWebToken)token;
             InMemorySymmetricSecurityKey key = null;
             
@@ -67,7 +70,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             }
             catch (Exception)
             {
-                throw new WebFaultException<string>("Failed to resolver isser's key", HttpStatusCode.Unauthorized);
+                throw new InvalidOperationException("Failed to resolver isser's key");
             }
 
             var mac = new HMACSHA256(key.GetSymmetricKey());
@@ -77,27 +80,39 @@ namespace Talk2Bits.IdentityModel.OAuth
                 );
 
             if (!string.Equals(jwt.Signature, cryptoInput, StringComparison.Ordinal))
-                throw new InvalidOperationException("Token contents do not match signature.");
+                throw new SignatureVerificationFailedException("Token contents do not match signature.");
 
-            // TODO: Expiration validation.
+            var utcNow = DateTime.UtcNow;
+
+            if (utcNow + Configuration.MaxClockSkew < token.ValidFrom)
+                throw new SecurityTokenNotYetValidException();
+
+            if (utcNow + Configuration.MaxClockSkew > token.ValidTo)
+                throw new SecurityTokenExpiredException();
             
             // TODO: Audience uri bearer token check.
             if (Configuration.AudienceRestriction.AudienceMode != AudienceUriMode.Never)
             {
                 if (string.IsNullOrWhiteSpace(jwt.ClaimsSection.Audience))
-                    throw new InvalidOperationException("Token does not contain Audience uri.");
+                    throw new AudienceUriValidationFailedException("Token does not contain Audience uri.");
 
                 var uri = new Uri(jwt.ClaimsSection.Audience);
                 
                 if (!Configuration.AudienceRestriction.AllowedAudienceUris.Contains(uri))
                 {
-                    throw new InvalidOperationException(
+                    throw new AudienceUriValidationFailedException(
                         string.Format("Uri {0} is not spceified in audience uri section", uri.ToString())
                         );
                 }
             }
 
+            if (Configuration.DetectReplayedTokens)
+                DetectReplayedTokens(token);
+
             var inputIdentity = new ClaimsIdentity(jwt.ClaimsSection.Claims);
+
+            if (Configuration.SaveBootstrapTokens)
+                inputIdentity.BootstrapToken = token;
 
             return new ClaimsIdentityCollection(new [] {inputIdentity});
         }
@@ -107,15 +122,16 @@ namespace Talk2Bits.IdentityModel.OAuth
             if (token == null)
                 throw new ArgumentNullException("token");
 
-            var wrappedElement = JwtTokenUtility.WrapInsideBinarySecurityToken(
-                ((JsonWebToken)token).GetRawToken()
-                );
-
+            var wrappedElement = 
+                JwtTokenUtility.WrapInsideBinarySecurityToken(((JsonWebToken)token).GetRawToken());
             wrappedElement.WriteTo(writer);
         }
 
         public override SecurityToken CreateToken(SecurityTokenDescriptor tokenDescriptor)
         {
+            if (tokenDescriptor == null)
+                throw new ArgumentNullException("tokenDescriptor");
+
             var seconds = (tokenDescriptor.Lifetime.Expires - tokenDescriptor.Lifetime.Created) ?? new TimeSpan(0, 0, 3600);
             var header = new JwtHeaderSegment();
             var claims = new JwtClaimsSegment(
