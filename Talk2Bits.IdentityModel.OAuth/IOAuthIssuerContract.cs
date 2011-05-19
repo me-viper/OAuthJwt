@@ -7,7 +7,7 @@ namespace Talk2Bits.IdentityModel.OAuth
     [ServiceContract]
     public interface IOAuthIssuerContract
     {
-        [WebInvoke(UriTemplate = "")]
+        [WebInvoke(UriTemplate = "", ResponseFormat = WebMessageFormat.Json)]
         Stream Issue(Stream request);
     }
 }

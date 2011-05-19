@@ -1,11 +1,10 @@
 using System;
 using System.Net;
-
-using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
-    [JsonObject(MemberSerialization.OptIn)]
+    [DataContract]
     public class OAuthError
     {
         /// <summary>
@@ -77,13 +76,13 @@ namespace Talk2Bits.IdentityModel.OAuth
             Uri = uri;
         }
 
-        [JsonProperty("error")]
+        [DataMember(Name = "error")]
         public string Error { get; set; }
 
-        [JsonProperty("error_description")]
+        [DataMember(Name = "error_description", EmitDefaultValue = false)]
         public string Description { get; set; }
 
-        [JsonProperty("error_uri")]
+        [DataMember(Name = "error_uri", EmitDefaultValue = false)]
         public string Uri { get; set; }
     }
 }
