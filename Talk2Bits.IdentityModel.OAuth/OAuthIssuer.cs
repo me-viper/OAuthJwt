@@ -77,7 +77,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             if (!ContainsKey(parameters, OAuthParameters.Scope))
                 throw new OAuthWebException(OAuthError.InvalidRequest);
 
-            var wifConfiguration = ((JwtIssuerServiceHost)OperationContext.Current.Host).Configuration;
+            var wifConfiguration = ((OAuthIssuerServiceHost)OperationContext.Current.Host).Configuration;
 
             ClaimsIdentityCollection identities = null;
 

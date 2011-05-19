@@ -70,8 +70,8 @@
     <Compile Include="JwtClaimsSegment.cs" />
     <Compile Include="JwtHeaderSegment.cs" />
     <Compile Include="JwtSecurityTokenHandler.cs" />
-    <Compile Include="JwtIssuerConfiguration.cs" />
-    <Compile Include="JwtIssuerServiceHost.cs" />
+    <Compile Include="OAuthIssuerConfiguration.cs" />
+    <Compile Include="OAuthIssuerServiceHost.cs" />
     <Compile Include="JwtTokenUtility.cs" />
     <Compile Include="JwtIssuer.cs" />
     <Compile Include="JwtRequestInterceptor.cs" />

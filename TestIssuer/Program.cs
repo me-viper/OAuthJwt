@@ -13,12 +13,12 @@ namespace TestIssuer
     {
         public static void Main(string[] args)
         {
-            var config = new JwtIssuerConfiguration { SecurityTokenService = typeof(JwtSecurityTokenService) };
+            var config = new OAuthIssuerConfiguration { SecurityTokenService = typeof(JwtSecurityTokenService) };
             config.TokenIssuerName = "MyCustomIssuer";
 
             config.SecurityTokenHandlers.AddOrReplace(new UserNamePasswordSecurityTokenHandler());
 
-            var wsh = new JwtIssuerServiceHost(config, new Uri("http://localhost:9111/WRAPv0.9"));
+            var wsh = new OAuthIssuerServiceHost(config, new Uri("http://localhost:9111/WRAPv0.9"));
             wsh.Open();
 
             foreach (var ep in wsh.Description.Endpoints)
