@@ -20,7 +20,7 @@ namespace Talk2Bits.IdentityModel.OAuth
         public Stream Issue(Stream request)
         {
             if (request == null)
-                throw new WebFaultException(HttpStatusCode.BadRequest);
+                throw new OAuthWebException(OAuthError.InvalidRequest);
 
             string postData = null;
 
@@ -30,13 +30,13 @@ namespace Talk2Bits.IdentityModel.OAuth
             }
 
             if (string.IsNullOrWhiteSpace(postData))
-                throw new WebFaultException(HttpStatusCode.BadRequest);
+                throw new OAuthWebException(OAuthError.InvalidRequest);
 
             var parameters = HttpUtility.ParseQueryString(postData);
             var tokenHandler = GetTokenHandler(parameters);
 
             if (!ContainsKey(parameters, OAuthParameters.Scope))
-                throw new WebFaultException(HttpStatusCode.BadRequest);
+                throw new OAuthWebException(OAuthError.InvalidRequest);
 
             var wifConfiguration = ((JwtIssuerServiceHost)OperationContext.Current.Host).Configuration;
             
@@ -48,7 +48,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             }
             catch (Exception)
             {
-                throw new WebFaultException<string>("Token validation failed.", HttpStatusCode.Forbidden);
+                throw new OAuthWebException(OAuthError.InvalidGrant);
             }
 
             string response = null;
@@ -70,7 +70,7 @@ namespace Talk2Bits.IdentityModel.OAuth
             }
             catch (Exception)
             {
-                throw new WebFaultException<string>("Failed to issue security token.", HttpStatusCode.BadRequest);
+                throw new OAuthWebException(OAuthError.InvalidClient, "Failed to issue security token");
             }
 
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json";
@@ -85,7 +85,7 @@ namespace Talk2Bits.IdentityModel.OAuth
                 return new UserNameSecurityToken(parameters[OAuthParameters.UserName], parameters[OAuthParameters.Password]);
 
             // TODO: Support other token handlers.
-            throw new NotSupportedException("Unsupported token type.");
+            throw new OAuthWebException(OAuthError.UnsupportedGrantType);
         }
         
         private static bool ContainsKey(NameObjectCollectionBase collection, string key)

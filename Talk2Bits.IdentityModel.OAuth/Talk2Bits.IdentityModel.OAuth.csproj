@@ -74,6 +74,7 @@
     <Compile Include="JwtTokenUtility.cs" />
     <Compile Include="JwtIssuer.cs" />
     <Compile Include="JwtRequestInterceptor.cs" />
+    <Compile Include="OAuthError.cs" />
     <Compile Include="OAuthParameters.cs" />
     <Compile Include="OAuthWebServiceHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
