@@ -3,6 +3,9 @@ using System.IdentityModel.Tokens;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
+    /// <summary>
+    /// Represents the cryptographic key and security algorithms that are used to generate a digital signature.
+    /// </summary>
     public class SymmetricSigningCredentials : SigningCredentials
     {
         public SymmetricSigningCredentials(string base64EncodedKey) 

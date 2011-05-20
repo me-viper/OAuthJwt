@@ -2,6 +2,9 @@ using Newtonsoft.Json;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
+    /// <summary>
+    /// JWT header segment. For details referer to Json Web Token specification.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class JwtHeaderSegment
     {

@@ -3,8 +3,20 @@ using System.Xml.Linq;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
+    /// <summary>
+    /// Contains helper methods.
+    /// </summary>
     public class JwtTokenUtility
     {
+        /// <summary>
+        /// Base64s the URL encode.
+        /// </summary>
+        /// <param name="arg">The byte array to encode.</param>
+        /// <returns>Base64Url encoded string.</returns>
+        /// <remarks>
+        /// Base64Url encoding is just old-good base64 without chars
+        /// that are invalid in Url.
+        /// </remarks>
         public static string Base64UrlEncode(byte[] arg)
         {
             // Standard base64 encoder.
@@ -17,6 +29,15 @@ namespace Talk2Bits.IdentityModel.OAuth
             return s;
         }
 
+        /// <summary>
+        /// Base64s the URL decode.
+        /// </summary>
+        /// <param name="arg">The string to decode.</param>
+        /// <returns>Base64Url encoded string.</returns>
+        /// <remarks>
+        /// Base64Url encoding is just old-good base64 without chars
+        /// that are invalid in Url.
+        /// </remarks>
         public static byte[] Base64UrlDecode(string arg)
         {
             string s = arg;

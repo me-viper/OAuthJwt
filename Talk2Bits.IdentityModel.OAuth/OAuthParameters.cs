@@ -2,6 +2,9 @@ using System;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
+    /// <summary>
+    /// Security token request parameters defined in OAuth v2 specification.
+    /// </summary>
     public static class OAuthParameters
     {
         public const string ClientId = "client_id";
@@ -12,6 +15,9 @@ namespace Talk2Bits.IdentityModel.OAuth
         public const string Scope = "scope";
     }
 
+    /// <summary>
+    /// Grant types defined in OAuth v2 specification.
+    /// </summary>
     public static class OAuthGrantTypes
     {
         public const string Password = "password";

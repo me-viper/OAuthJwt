@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
+    /// <summary>
+    /// Error codes defined by OAuth v2 specification.
+    /// </summary>
     [DataContract]
     public class OAuthError
     {

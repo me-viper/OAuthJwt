@@ -18,10 +18,24 @@ using Newtonsoft.Json;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
+    /// <summary>
+    /// Base class for IP that use OAuth authorization protocol to issue security tokens.
+    /// </summary>
     internal abstract class OAuthIssuer
     {
+        /// <summary>
+        /// Type of token that should be issued by IP.
+        /// </summary>
         protected abstract string TokenTypeIdentifier { get; }
 
+        /// <summary>
+        /// Issues security token.
+        /// </summary>
+        /// <param name="request">
+        /// The request containing all information required to issue security token
+        /// according to OAuth v2 specification.
+        /// </param>
+        /// <returns>Issued token.</returns>
         public Stream Issue(Stream request)
         {
             WebOperationContext.Current.OutgoingResponse.ContentType = "application/json; charset=utf-8";
@@ -62,6 +76,15 @@ namespace Talk2Bits.IdentityModel.OAuth
             return SecurityTokenHandlerCollectionManager.Usage.Default;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parameters">Security token request parameters.</param>
+        /// <param name="grantType">
+        /// OAuth grant type that specifies how client credentials should be
+        /// validated.
+        /// </param>
+        /// <returns>Security token.</returns>
         protected virtual SecurityToken GetSecurityToken(NameValueCollection parameters, string grantType)
         {
             if (string.Equals(grantType, OAuthGrantTypes.Password, StringComparison.OrdinalIgnoreCase))
@@ -72,9 +95,19 @@ namespace Talk2Bits.IdentityModel.OAuth
                 return new UserNameSecurityToken(userName, password);
             }
 
+            // TODO: Support other grant types.
             throw new OAuthWebException(OAuthError.UnsupportedGrantType);
         }
 
+        /// <summary>
+        /// Extracts parameter with specified key from request.
+        /// </summary>
+        /// <param name="parameters">Security token request paramters.</param>
+        /// <param name="parameter">Key of paramenter that should be extracted.</param>
+        /// <returns>Parameter value.</returns>
+        /// <exception cref="OAuthWebException">
+        /// Security token request does not contain parameter with specified key.
+        /// </exception>
         protected static string GetParameterOrThrow(NameValueCollection parameters, string parameter)
         {
             if (!ContainsKey(parameters, parameter))
@@ -83,15 +116,38 @@ namespace Talk2Bits.IdentityModel.OAuth
             return parameters[parameter];
         }
 
+        /// <summary>
+        /// Determines whether security token request contains parameter with specified key.
+        /// </summary>
+        /// <param name="collection">Security token request parameters.</param>
+        /// <param name="key">Parameter key.</param>
+        /// <returns>
+        /// 	<c>true</c> if security token request contains parameter with key; otherwise, <c>false</c>.
+        /// </returns>
         protected static bool ContainsKey(NameObjectCollectionBase collection, string key)
         {
             return collection.Keys.Cast<string>().Any(ckey => ckey.Equals(key, StringComparison.Ordinal));
         }
 
+        /// <summary>
+        /// Issues security token.
+        /// </summary>
+        /// <param name="requestParameters">
+        /// The request containing all information required to issue security token
+        /// according to OAuth v2 specification.
+        /// </param>
+        /// <returns>Issued token.</returns>
         private Stream Issue(string requestParameters)
         {
+            // That is not real issuer. Big idea here is to accept
+            // REST token request (OAuth has nothing in common with WSTrust)
+            // perform necessary validations/transformations, call real
+            // issuer and than make transformations again to form response.
+
             var parameters = HttpUtility.ParseQueryString(requestParameters);
             var grantType = GetParameterOrThrow(parameters, OAuthParameters.GrantType);
+
+            // Creating security token depending on grant type.
             var securityToken = GetSecurityToken(parameters, grantType);
 
             var wifConfiguration = ((OAuthIssuerServiceHost)OperationContext.Current.Host).Configuration;
@@ -99,6 +155,7 @@ namespace Talk2Bits.IdentityModel.OAuth
 
             try
             {
+                // WIF would do this automatically but in RESTful case we are on our own.
                 identities = wifConfiguration.SecurityTokenHandlerCollectionManager[GetTokenUsage()].ValidateToken(securityToken);
             }
             catch (AudienceUriValidationFailedException)
@@ -114,6 +171,7 @@ namespace Talk2Bits.IdentityModel.OAuth
                 throw new OAuthWebException(HttpStatusCode.InternalServerError);
             }
 
+            // Making things look like client called real issuer directly.
             RequestSecurityTokenResponse rstr = null;
 
             try
@@ -138,6 +196,7 @@ namespace Talk2Bits.IdentityModel.OAuth
                 throw new OAuthWebException(OAuthError.InvalidClient, "Failed to issue security token");
             }
 
+            // Transforming issued token back to form that is expected by client.
             var token = GetResponse(rstr.RequestedSecurityToken.SecurityToken);
             if (token == null || !token.Validate())
                 throw new OAuthWebException(HttpStatusCode.InternalServerError);

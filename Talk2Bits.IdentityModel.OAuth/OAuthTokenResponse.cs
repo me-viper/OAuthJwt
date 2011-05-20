@@ -4,6 +4,9 @@ using Newtonsoft.Json;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
+    /// <summary>
+    /// Security token format defined by OAuth v2 specification.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class OAuthTokenResponse
     {

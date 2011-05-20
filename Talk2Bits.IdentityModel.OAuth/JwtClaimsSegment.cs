@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
+    /// <summary>
+    /// JWT payload section. For details referer to Json Web Token specification.
+    /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
     public class JwtClaimsSegment
     {

@@ -3,6 +3,9 @@ using System.ServiceModel.Web;
 
 namespace Talk2Bits.IdentityModel.OAuth
 {
+    /// <summary>
+    /// RESTful OAuth v2 compatible issuer service.
+    /// </summary>
     public class OAuthIssuerServiceHost : WebServiceHost
     {
         public OAuthIssuerServiceHost(OAuthIssuerConfiguration configuration)
