@@ -127,7 +127,7 @@ namespace Talk2Bits.IdentityModel.OAuth
                     };
                 PrepareRequestSecurityToken(rst);
                 var securityTokenService = wifConfiguration.CreateSecurityTokenService();
-                rstr = securityTokenService.Issue(new ClaimsPrincipal(identities), rst);                
+                rstr = securityTokenService.Issue(new ClaimsPrincipal(identities), rst);
             }
             catch (InvalidRequestException)
             {

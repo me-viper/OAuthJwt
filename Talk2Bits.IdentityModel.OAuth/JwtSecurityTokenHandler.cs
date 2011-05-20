@@ -90,7 +90,6 @@ namespace Talk2Bits.IdentityModel.OAuth
             if (utcNow + Configuration.MaxClockSkew > token.ValidTo)
                 throw new SecurityTokenExpiredException();
             
-            // TODO: Audience uri bearer token check.
             if (Configuration.AudienceRestriction.AudienceMode != AudienceUriMode.Never)
             {
                 if (string.IsNullOrWhiteSpace(jwt.ClaimsSection.Audience))
